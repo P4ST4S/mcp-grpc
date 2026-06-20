@@ -1,0 +1,14 @@
+version: v2
+# go_package in the .proto carries the full import path
+# (github.com/P4ST4S/mcp-grpc/mcpgrpcv1), so out: . with paths=import lands the
+# generated stubs in mcpgrpcv1/ at the repo root. source_relative would instead
+# put them under proto/mcp/grpc/v1/ — not what we want.
+managed:
+  enabled: false
+plugins:
+  - local: protoc-gen-go
+    out: .
+    opt: paths=import
+  - local: protoc-gen-go-grpc
+    out: .
+    opt: paths=import
