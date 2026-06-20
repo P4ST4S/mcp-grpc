@@ -55,5 +55,6 @@ interfaces. This is a library, not a binary.
 - TLS/mTLS over a real TCP listener is exercised in v0.2; v0.1 tests run over `bufconn`.
 - Default gRPC message size is 4 MB; large `tools/call` results require raising `MaxRecvMsgSize`/`MaxSendMsgSize` on the caller's conn/server.
 
-[Unreleased]: https://github.com/P4ST4S/mcp-grpc/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/P4ST4S/mcp-grpc/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/P4ST4S/mcp-grpc/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/P4ST4S/mcp-grpc/releases/tag/v0.1.0
