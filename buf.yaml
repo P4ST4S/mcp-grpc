@@ -1,9 +1,17 @@
 version: v2
 modules:
-  - path: proto
+  - path: proto/mcp/grpc/v1
 lint:
   use:
     - STANDARD
+  except:
+    # This is a transport, not a domain service. The single Connect RPC streams
+    # a symmetric Frame in both directions on purpose, so these naming/shape
+    # conventions for request/response domain services don't apply.
+    - SERVICE_SUFFIX
+    - RPC_REQUEST_RESPONSE_UNIQUE
+    - RPC_REQUEST_STANDARD_NAME
+    - RPC_RESPONSE_STANDARD_NAME
 breaking:
   use:
     - FILE
