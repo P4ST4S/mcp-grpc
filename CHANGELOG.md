@@ -7,6 +7,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-06-20
+
+The bridge release. `mcp-grpc` now ships `cmd/mcp-grpc-bridge`, a transparent
+stdio → gRPC bridge that lets existing stdio MCP clients (Claude Desktop,
+Cursor, …) reach a remote MCP server over a gRPC connection, with TLS/mTLS. The
+bridge is a local MCP server on its stdio side and an MCP client on its gRPC
+side, in one process; it relays JSON-RPC messages in both directions without
+interpreting MCP semantics.
+
+### Added
+
+- `cmd/mcp-grpc-bridge`: a stdio → gRPC bridge. It opens a stdio `mcp.Connection` and a gRPC `mcp.Connection` (via `transport.ClientTransport`) and pumps `jsonrpc.Message` values between them in both directions, ending cleanly when either side closes.
+- TLS and mTLS support on the bridge's gRPC connection via `-tls`, `-ca`, `-cert`, `-key`, `-server-name`, and `-insecure-skip-verify` flags. TLS minimum version is 1.2; `-cert`/`-key` must be supplied together for mTLS.
+- End-to-end test exercising a real MCP client → bridge sub-process → echo MCP server over a **real TCP listener with TLS** (certificates generated in-test), plus a unit test of the relay pump asserting both-direction relay and clean close.
+
+### Changed
+
+- README documents the bridge usage (plaintext, TLS, mTLS) and reframes the project's lasting value as connectivity rather than a scaffold.
+
 ## [0.1.0] - 2026-06-20
 
 First release: a pluggable gRPC transport for the Model Context Protocol (MCP)

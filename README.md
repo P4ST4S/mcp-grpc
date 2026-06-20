@@ -12,9 +12,9 @@ directly into the official [`go-sdk`](https://github.com/modelcontextprotocol/go
 > (Python first) aimed at cutting JSON serialization overhead. This library
 > deliberately carries **opaque JSON-RPC bytes**, so it gains HTTP/2 multiplexing
 > but **not** that serialization win — it is a transport/bridge, not a perf
-> competitor to a typed proto. The release that will matter is **v0.2 (the
-> bridge/proxy)**, whose value is connectivity (gRPC-native clients ↔ MCP
-> JSON-RPC servers) regardless of opaque-vs-typed. v0.1 is the scaffold.
+> competitor to a typed proto. Its lasting value is **connectivity**: bridging
+> existing stdio MCP clients to a remote MCP server over gRPC, regardless of
+> opaque-vs-typed. v0.2 ships that bridge.
 
 ## What v0.1 does
 
@@ -59,6 +59,32 @@ res, _ := session.CallTool(ctx, &mcp.CallToolParams{Name: "echo", Arguments: map
 go run ./examples/server -addr :7777
 go run ./examples/client -addr localhost:7777 -text "hello over grpc"
 ```
+
+## Bridge: stdio → gRPC (`cmd/mcp-grpc-bridge`)
+
+The bridge lets any **stdio MCP client** (Claude Desktop, Cursor, …) talk to a
+**remote MCP server over gRPC**. It is a local MCP server on its stdio side and
+an MCP client on its gRPC side, in one process — it transparently relays
+JSON-RPC messages in both directions and never interprets MCP semantics.
+
+```sh
+go install github.com/P4ST4S/mcp-grpc/cmd/mcp-grpc-bridge@latest
+
+# Plaintext (local/dev only):
+mcp-grpc-bridge -addr localhost:7777
+
+# TLS, verifying the server against a CA bundle:
+mcp-grpc-bridge -addr mcp.example.com:7777 -tls -ca ca.pem
+
+# mTLS (client certificate), with a server-name override:
+mcp-grpc-bridge -addr 10.0.0.5:7777 -tls -ca ca.pem \
+    -cert client.pem -key client-key.pem -server-name mcp.example.com
+```
+
+Wire it into a stdio MCP client by pointing the client's command at the bridge
+binary with its flags. The bridge owns and configures the `*grpc.ClientConn`
+(TLS, message sizes); `-addr` is required. `-insecure-skip-verify` exists for
+testing but disables server verification — do not use it in production.
 
 ## Design notes
 
