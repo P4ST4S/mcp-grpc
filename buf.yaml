@@ -12,6 +12,12 @@ lint:
     - RPC_REQUEST_RESPONSE_UNIQUE
     - RPC_REQUEST_STANDARD_NAME
     - RPC_RESPONSE_STANDARD_NAME
+    # The module is rooted at the .proto's own directory so that
+    # source_relative codegen lands the stubs directly in mcpgrpcv1/ (the flat,
+    # public package the plan mandates) rather than mcpgrpcv1/mcp/grpc/v1/.
+    # That makes the package path "." not match "mcp/grpc/v1"; the package name
+    # is still correct, so this rule is moot here.
+    - PACKAGE_DIRECTORY_MATCH
 breaking:
   use:
     - FILE
