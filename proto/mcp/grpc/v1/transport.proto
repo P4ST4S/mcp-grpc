@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+package mcp.grpc.v1;
+
+option go_package = "github.com/P4ST4S/mcp-grpc/mcpgrpcv1;mcpgrpcv1";
+
+// MCPTransport carries MCP JSON-RPC traffic over a single gRPC bidirectional
+// stream. It is a transport, not a typed MCP API: the payload is an opaque
+// JSON-RPC message (see Frame). One Connect call == one MCP session.
+service MCPTransport {
+  // Connect opens a logical bidirectional JSON-RPC connection. Each call is a
+  // distinct MCP session; the call lives for the duration of that session.
+  rpc Connect(stream Frame) returns (stream Frame);
+}
+
+// Frame is a pure envelope around a single encoded JSON-RPC message. Session
+// id, auth tokens and trace context belong in gRPC metadata (headers) plus
+// interceptors, NOT in this message.
+message Frame {
+  // payload is one JSON-RPC message as produced by jsonrpc.EncodeMessage and
+  // consumed by jsonrpc.DecodeMessage.
+  bytes payload = 1;
+
+  // Field numbers 2..15 are reserved for a future typed evolution so adding
+  // fields stays a single-byte tag change.
+  reserved 2 to 15;
+}
