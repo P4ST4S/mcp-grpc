@@ -1,0 +1,13 @@
+version: "2"
+
+linters:
+  default: standard
+  exclusions:
+    rules:
+      # Generated protobuf stubs are not ours to lint.
+      - path: mcpgrpcv1/
+        linters:
+          - errcheck
+          - govet
+          - staticcheck
+          - unused

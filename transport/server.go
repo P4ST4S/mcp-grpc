@@ -135,7 +135,7 @@ func (c *serverConn) Read(ctx context.Context) (jsonrpc.Message, error) {
 }
 
 func (c *serverConn) Write(_ context.Context, msg jsonrpc.Message) error {
-	return c.writer.write(msg)
+	return c.write(msg)
 }
 
 // Close is idempotent and concurrency-safe. It flips the closed flag under the

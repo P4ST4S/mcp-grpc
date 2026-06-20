@@ -66,7 +66,7 @@ func TestInterop_InitializeListCall(t *testing.T) {
 	if err != nil {
 		t.Fatalf("client.Connect (initialize): %v", err)
 	}
-	defer session.Close()
+	defer func() { _ = session.Close() }()
 
 	tools, err := session.ListTools(ctx, nil)
 	if err != nil {
